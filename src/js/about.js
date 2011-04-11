@@ -26,6 +26,21 @@ About.prototype =
 		text.style.textAlign = 'center';		
 		text.innerHTML = '<strong>HARMONY</strong> <a href="changelog.txt" target="_blank">r' + REV + '</a> by <a href="http://twitter.com/mrdoob" target="_blank">Mr.doob</a>';
 		containerText.appendChild(text);
+		
+		text = document.createElement("p");
+		text.style.textAlign = 'center';		
+		text.innerHTML = 'Tap <span class="key">three fingers</span> to open the foreground color picker.';
+		containerText.appendChild(text);
+		
+		text = document.createElement("p");
+		text.style.textAlign = 'center';		
+		text.innerHTML = 'Pinch with <span class="key">two fingers</span> to adjust brush size.';
+		containerText.appendChild(text);
+		
+		text = document.createElement("p");
+		text.style.textAlign = 'center';		
+		text.innerHTML = 'With <a href="https://github.com/nilium/harmony">modifications</a> for iPad friendliness by <a href="http://www.spifftastic.net">Noel Cower</a>';
+		containerText.appendChild(text);
 
 		text = document.createElement("p");
 		text.style.textAlign = 'center';
