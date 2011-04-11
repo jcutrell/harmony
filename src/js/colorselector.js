@@ -6,7 +6,14 @@ function ColorSelector( gradient )
 ColorSelector.prototype =
 {
 	container: null,
+	
+	gradientContainer: null,
 	color: [0, 0, 0],
+
+	inputContainer: null,
+	hueInput: null,
+	saturationInput: null,
+	luminosityInput: null,
 
 	hueSelector: null,
 	luminosity: null,
@@ -17,18 +24,27 @@ ColorSelector.prototype =
 	dispatcher: null,
 	changeEvent: null,
 	
+	areaDelta: 0,
+	
 	init: function(gradient)
 	{
 		var scope = this, context, hue, hueData;
 
 		this.container = document.createElement('div');
 		this.container.style.position = 'absolute';
-		this.container.style.width = '250px';
+		this.container.style.width = '400px';
 		this.container.style.height = '250px';
 		this.container.style.visibility = 'hidden';
-		this.container.style.cursor = 'pointer';
-		this.container.addEventListener('mousedown', onMouseDown, false);
-		this.container.addEventListener('touchstart', onTouchStart, false);
+		
+		this.gradientContainer = document.createElement('div');
+		this.gradientContainer.style.position = 'absolute';
+		this.gradientContainer.style.left = '0px';
+		this.gradientContainer.style.top = '0px';
+		this.gradientContainer.style.width = '250px';
+		this.gradientContainer.style.height = '250px';
+		this.gradientContainer.style.cursor = 'pointer';
+		this.gradientContainer.addEventListener('mousedown', onMouseDown, false);
+		this.gradientContainer.addEventListener('touchstart', onTouchStart, false);
 
 		hue = document.createElement("canvas");
 		hue.width = gradient.width;
@@ -39,7 +55,7 @@ ColorSelector.prototype =
 
 		hueData = context.getImageData(0, 0, hue.width, hue.height).data;	
 		
-		this.container.appendChild(hue);
+		this.gradientContainer.appendChild(hue);
 		
 		this.luminosity = document.createElement("canvas");
 		this.luminosity.style.position = 'absolute';
@@ -48,7 +64,7 @@ ColorSelector.prototype =
 		this.luminosity.width = 250;
 		this.luminosity.height = 250;
 
-		this.container.appendChild(this.luminosity);
+		this.gradientContainer.appendChild(this.luminosity);
 
 		this.hueSelector = document.createElement("canvas");
 		this.hueSelector.style.position = 'absolute';
@@ -68,7 +84,7 @@ ColorSelector.prototype =
 		context.arc(7, 7, 6, 0, Math.PI * 2, true);
 		context.stroke();
 
-		this.container.appendChild( this.hueSelector );
+		this.gradientContainer.appendChild( this.hueSelector );
 		
 		this.luminosityPosition = [ (gradient.width - 15), (gradient.height - 15) / 2 ];
 		
@@ -79,10 +95,63 @@ ColorSelector.prototype =
 		this.luminositySelector.width = 15;
 		this.luminositySelector.height = 15;
 		
+		this.inputContainer = document.createElement("div");
+		this.inputContainer.readOnly = false;
+		this.inputContainer.style.width = "128px";
+		this.inputContainer.style.height = "250px";
+		this.inputContainer.style.left = '272px';
+		this.inputContainer.style.top = '0px';
+		this.inputContainer.style.position = 'absolute';
+		
+		var label = document.createElement("label");
+		label.htmlFor = "hueInput";
+		label.innerHTML = " Hue";
+		
+		this.hueInput = document.createElement("input");
+		this.hueInput.type = "text";
+		this.hueInput.id = "hueInput";
+		this.hueInput.defaultValue = 0;
+		this.hueInput.size = 9;
+		this.hueInput.maxLength = 3;
+		this.hueInput.style.width = '48px';
+		this.inputContainer.appendChild(this.hueInput);
+		this.inputContainer.appendChild(label);
+		
+		label = document.createElement("label");
+		label.htmlFor = "saturationInput";
+		label.innerHTML = " Saturation";
+		
+		this.saturationInput = document.createElement("input");
+		this.saturationInput.type = "text";
+		this.saturationInput.id = "saturationInput";
+		this.saturationInput.defaultValue = 0;
+		this.saturationInput.size = 9;
+		this.saturationInput.maxLength = 3;
+		this.saturationInput.style.width = '48px';
+		this.inputContainer.appendChild(this.saturationInput);
+		this.inputContainer.appendChild(label);
+		
+		label = document.createElement("label");
+		label.htmlFor = "luminosityInput";
+		label.innerHTML = " Luminosity";
+		
+		this.luminosityInput = document.createElement("input");
+		this.luminosityInput.type = "text";
+		this.luminosityInput.id = "luminosityInput";
+		this.luminosityInput.defaultValue = 0;
+		this.luminosityInput.size = 9;
+		this.luminosityInput.maxLength = 3;
+		this.luminosityInput.style.width = '48px';
+		this.inputContainer.appendChild(this.luminosityInput);
+		this.inputContainer.appendChild(label);
+		
+		this.container.appendChild(this.inputContainer);
+		this.container.appendChild(this.gradientContainer);
+		
 		context = this.luminositySelector.getContext("2d");
 		context.drawImage(this.hueSelector, 0, 0, this.luminositySelector.width, this.luminositySelector.height);
 		
-		this.container.appendChild(this.luminositySelector);
+		this.gradientContainer.appendChild(this.luminositySelector);
 		
 		this.dispatcher = document.createElement('div'); // this could be better handled...
 		
@@ -121,7 +190,7 @@ ColorSelector.prototype =
 				window.addEventListener('touchmove', onTouchMove, false);
 				window.addEventListener('touchend', onTouchEnd, false);
 		
-				update( event.touches[0].pageX - scope.container.offsetLeft, event.touches[0].pageY - scope.container.offsetTop );
+				update( event.touches[0].pageX - scope.container.offsetLeft, event.touches[0].pageY - scope.container.offsetTop, true );
 			}
 		}
 
@@ -131,7 +200,7 @@ ColorSelector.prototype =
 			{
 				event.preventDefault();
 			
-				update( event.touches[0].pageX - scope.container.offsetLeft, event.touches[0].pageY - scope.container.offsetTop );
+				update( event.touches[0].pageX - scope.container.offsetLeft, event.touches[0].pageY - scope.container.offsetTop, false );
 			}
 		}
 
@@ -148,21 +217,85 @@ ColorSelector.prototype =
 		
 		//
 		
-		function update(x, y)
+		function updateColorInputs()
+		{
+			var hsv = [0,0,0];
+			var r=scope.color[0], g=scope.color[1], b=scope.color[2];
+			var mn, mx, dif, ad, dv, md;
+			mn = Math.min(r, g, b);
+			mx = Math.max(r, g, b);
+			if (r > g && r > b) {
+				dif = g - b;
+				ad = 0;
+			} else if (g > b) {
+				dif = b - r;
+				ad = 120;
+			} else {
+				dif = r - g;
+				ad = 240;
+			}
+			
+			md = mx - mn;
+			var mdt = 0;
+			if (md != 0) {
+				mdt = 1.0 / md;
+			}
+			
+			var mxt = 0;
+			if (mx != 0) {
+				mxt = 1.0 / mx;
+			}
+			
+			
+			hsv[0] = 60 * (dif * mdt) + ad;
+			if (hsv[0] < 0) {
+				hsv[0] = 360 + hsv[0];
+			}
+			hsv[1] = md * mxt;
+			hsv[2] = mx;
+			
+			scope.hueInput.value = Math.floor(hsv[0]);
+			scope.saturationInput.value = Math.floor(hsv[1] * 100);
+			scope.luminosityInput.value = Math.floor(hsv[2] / 2.56);
+		}
+		
+		function update(x, y, began)
 		{
 			var dx, dy, d, nx, ny;
 			
 			dx = x - 125;
 			dy = y - 125;
 			d = Math.sqrt( dx * dx + dy * dy );
-
-			if (d < 90)
+			
+			if (began) {
+				scope.areaDelta = d;
+			}
+			
+			var pickHue = 0;
+			if (scope.areaDelta < 90) {
+				pickHue = 1;
+			} else if (scope.areaDelta > 100) {
+				pickHue = 2;
+			}
+			
+			if (pickHue == 1)
 			{
+				if (d > 89.5) {
+					var scale = d / 89.5;
+					dx = Math.floor(dx / scale);
+					dy = Math.floor(dy / scale);
+					
+					x = dx + 125;
+					y = dy + 125;
+					d = 89.5;
+				}
+				
 				scope.hueSelector.style.left = (x - 7) + 'px';
 				scope.hueSelector.style.top = (y - 7) + 'px';
-				scope.updateLuminosity( [ hueData[(x + (y * 250)) * 4], hueData[(x + (y * 250)) * 4 + 1], hueData[(x + (y * 250)) * 4 + 2] ] );
+				var index = (x + (y * 250)) * 4;
+				scope.updateLuminosity( [ hueData[index], hueData[index + 1], hueData[index + 2] ] );
 			}
-			else if (d > 100)
+			else if (pickHue == 2)
 			{
 				nx = dx / d;
 				ny = dy / d;
@@ -176,11 +309,13 @@ ColorSelector.prototype =
 			
 			x = Math.floor(scope.luminosityPosition[0]);
 			y = Math.floor(scope.luminosityPosition[1]);
-		
+			
 			scope.color[0] = scope.luminosityData[(x + (y * 250)) * 4];
 			scope.color[1] = scope.luminosityData[(x + (y * 250)) * 4 + 1];
 			scope.color[2] = scope.luminosityData[(x + (y * 250)) * 4 + 2];			
-		
+			
+			updateColorInputs();
+			
 			scope.dispatchEvent( scope.changeEvent );
 		}
 	},

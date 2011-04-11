@@ -28,7 +28,9 @@ var SCREEN_WIDTH = window.innerWidth,
     isAboutVisible = false,
     isMenuMouseOver = false,
     shiftKeyIsDown = false,
-    altKeyIsDown = false;
+    altKeyIsDown = false,
+	brushSizeTouchStart = 1,
+	brushSizeTouchReference = 0.0;
 
 init();
 
@@ -255,9 +257,32 @@ function onWindowBlur( event )
 
 // DOCUMENT
 
+function isEventInColorSelector(cx, cy) {
+	if (!isFgColorSelectorVisible && !isBgColorSelectorVisible) {
+		return false;
+	}
+	
+	var xLoc = 0,
+		yLoc = 0;
+	
+	if (isFgColorSelectorVisible) {
+		xLoc = foregroundColorSelector.container.offsetLeft + 250;
+		yLoc = foregroundColorSelector.container.offsetTop;
+	} else {
+		xLoc = backgroundColorSelector.container.offsetLeft + 250;
+		yLoc = backgroundColorSelector.container.offsetTop;
+	}
+	
+	xLoc = cx - xLoc;
+	yLoc = cy - yLoc;
+	
+	return (xLoc >= 0 && xLoc <= 150 &&
+		    yLoc >= 0 && yLoc <= 250);
+}
+
 function onDocumentMouseDown( event )
 {
-	if (!isMenuMouseOver)
+	if (!isMenuMouseOver && !isEventInColorSelector(event.clientX, event.clientY))
 		event.preventDefault();
 }
 
@@ -458,6 +483,35 @@ function onCanvasMouseUp()
 
 //
 
+function showFGColorPickerAtLocation(loc) {
+	foregroundColorSelector.show();
+	foregroundColorSelector.container.style.left = (loc[0] - (foregroundColorSelector.container.offsetWidth / 2)) + 'px';
+	foregroundColorSelector.container.style.top = (loc[1] - (foregroundColorSelector.container.offsetHeight / 2)) + 'px';
+
+	isFgColorSelectorVisible = true;
+}
+
+function averageTouchPositions(touches) {
+	var touchLength = touches.length;
+	var average = [0,0];
+	
+	for (var i = 0; i < event.touches.length; ++i) {
+		var touch = event.touches[i];
+		average[0] += touch.pageX;
+		average[1] += touch.pageY;
+	}
+	average[0] = average[0] / touches.length;
+	average[1] = average[1] / touches.length;
+	
+	return average;
+}
+
+function distance(a, b) {
+	var dx=a.pageX-b.pageX;
+	var dy=a.pageY-b.pageY;
+	return Math.sqrt(dx*dx + dy*dy);
+}
+
 function onCanvasTouchStart( event )
 {
 	cleanPopUps();		
@@ -470,6 +524,26 @@ function onCanvasTouchStart( event )
 		
 		window.addEventListener('touchmove', onCanvasTouchMove, false);
 		window.addEventListener('touchend', onCanvasTouchEnd, false);
+	}
+	else if (event.touches.length == 2)
+	{
+		event.preventDefault();
+		
+		brushSizeTouchReference = distance(event.touches[0], event.touches[1]);
+		brushSizeTouchStart = BRUSH_SIZE;
+		
+		window.addEventListener('touchmove', onBrushSizeTouchMove, false);
+		window.addEventListener('touchend', onBrushSizeTouchEnd, false);
+	}
+	else if (event.touches.length == 3)
+	{
+		event.preventDefault();
+		
+		var loc = averageTouchPositions(event.touches);
+		showFGColorPickerAtLocation(loc);
+		
+		window.addEventListener('touchmove', onFGColorPickerTouchMove, false);
+		window.addEventListener('touchend', onFGColorPickerTouchEnd, false);
 	}
 }
 
@@ -492,6 +566,50 @@ function onCanvasTouchEnd( event )
 
 		window.removeEventListener('touchmove', onCanvasTouchMove, false);
 		window.removeEventListener('touchend', onCanvasTouchEnd, false);
+	}
+}
+
+function onFGColorPickerTouchMove( event )
+{
+	if (event.touches.length == 3)
+	{
+		event.preventDefault();
+		var loc = averageTouchPositions(event.touches);
+		foregroundColorSelector.container.style.left = (loc[0] - (foregroundColorSelector.container.offsetWidth / 2)) + 'px';
+		foregroundColorSelector.container.style.top = (loc[1] - (foregroundColorSelector.container.offsetHeight / 2)) + 'px';
+	}
+}
+
+function onFGColorPickerTouchEnd( event )
+{
+	if (event.touches.length == 0)
+	{
+		event.preventDefault();
+		
+		window.removeEventListener('touchmove', onFGColorPickerTouchMove, false);
+		window.removeEventListener('touchend', onFGColorPickerTouchEnd, false);
+	}
+}
+
+function onBrushSizeTouchMove( event )
+{
+	if (event.touches.length == 2)
+	{
+		event.preventDefault();
+		
+		var size = brushSizeTouchStart + (distance(event.touches[0], event.touches[1]) - brushSizeTouchReference) / 4;
+		BRUSH_SIZE = Math.max(Math.min(Math.floor(size), 320), 1);
+	}
+}
+
+function onBrushSizeTouchEnd( event )
+{
+	if (event.touches.length == 0)
+	{
+		event.preventDefault();
+		
+		window.removeEventListener('touchmove', onBrushSizeTouchMove, false);
+		window.removeEventListener('touchend', onBrushSizeTouchEnd, false);
 	}
 }
 
