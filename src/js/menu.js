@@ -12,6 +12,7 @@ Menu.prototype =
 	
 	selector: null,
 	save: null,
+	exportImage: null,
 	clear: null,
 	about: null,
 	
@@ -67,6 +68,14 @@ Menu.prototype =
 		this.save.className = 'button';
 		this.save.innerHTML = 'Save';
 		this.container.appendChild(this.save);
+		
+		space = document.createTextNode(" ");
+		this.container.appendChild(space);
+		
+		this.exportImage = document.createElement("span"); //getElementById('exportImage');
+		this.exportImage.className = 'button';
+		this.exportImage.innerHTML = 'Export';
+		this.container.appendChild(this.exportImage);
 		
 		space = document.createTextNode(" ");
 		this.container.appendChild(space);

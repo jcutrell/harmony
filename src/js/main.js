@@ -92,6 +92,8 @@ function init()
 	menu.selector.addEventListener('change', onMenuSelectorChange, false);
 	menu.save.addEventListener('click', onMenuSave, false);
 	menu.save.addEventListener('touchend', onMenuSave, false);
+	menu.exportImage.addEventListener('click', onMenuExportImage, false);
+	menu.exportImage.addEventListener('touchend', onMenuExportImage, false);
 	menu.clear.addEventListener('click', onMenuClear, false);
 	menu.clear.addEventListener('touchend', onMenuClear, false);
 	menu.about.addEventListener('click', onMenuAbout, false);
@@ -403,6 +405,11 @@ function onMenuMouseOut()
 
 function onMenuSave()
 {
+	saveToLocalStorage();
+}
+
+function onMenuExportImage()
+{
 	// window.open(canvas.toDataURL('image/png'),'mywindow');
 	flatten();
 	window.open(flattenCanvas.toDataURL('image/png'),'mywindow');
@@ -514,6 +521,7 @@ function distance(a, b) {
 
 function onCanvasTouchStart( event )
 {
+	clearTimeout(saveTimeOut);
 	cleanPopUps();		
 
 	if(event.touches.length == 1)
@@ -575,6 +583,12 @@ function onCanvasTouchEnd( event )
 
 		window.removeEventListener('touchmove', onCanvasTouchMove, false);
 		window.removeEventListener('touchend', onCanvasTouchEnd, false);
+		
+		if (STORAGE)
+		{
+			clearTimeout(saveTimeOut);
+			saveTimeOut = setTimeout(saveToLocalStorage, 2000, true);
+		}
 	}
 }
 
@@ -586,6 +600,12 @@ function onResetBrushTouchEnd( event )
 		brush.destroy();
 		brush = eval("new " + BRUSHES[menu.selector.selectedIndex] + "(context)");
 		window.removeEventListener('touchend', onResetBrushTouchEnd, false);
+		
+		if (STORAGE)
+		{
+			clearTimeout(saveTimeOut);
+			saveTimeOut = setTimeout(saveToLocalStorage, 2000, true);
+		}
 	}
 }
 
@@ -608,6 +628,12 @@ function onFGColorPickerTouchEnd( event )
 		
 		window.removeEventListener('touchmove', onFGColorPickerTouchMove, false);
 		window.removeEventListener('touchend', onFGColorPickerTouchEnd, false);
+		
+		if (STORAGE)
+		{
+			clearTimeout(saveTimeOut);
+			saveTimeOut = setTimeout(saveToLocalStorage, 2000, true);
+		}
 	}
 }
 
@@ -630,6 +656,12 @@ function onBrushSizeTouchEnd( event )
 		
 		window.removeEventListener('touchmove', onBrushSizeTouchMove, false);
 		window.removeEventListener('touchend', onBrushSizeTouchEnd, false);
+		
+		if (STORAGE)
+		{
+			clearTimeout(saveTimeOut);
+			saveTimeOut = setTimeout(saveToLocalStorage, 2000, true);
+		}
 	}
 }
 
