@@ -64,11 +64,9 @@ function init()
 
 	canvas = document.createElement("canvas");
 	canvas.width = SCREEN_WIDTH;
-	canvas.height = SCREEN_HEIGHT;
+//	canvas.height = SCREEN_HEIGHT;
 	canvas.style.cursor = 'crosshair';
 	container.appendChild(canvas);
-	
-	context = canvas.getContext("2d");
 	
 	flattenCanvas = document.createElement("canvas");
 	flattenCanvas.width = SCREEN_WIDTH;
@@ -84,23 +82,33 @@ function init()
 	backgroundColorSelector.addEventListener('change', onBackgroundColorSelectorChange, false);
 	container.appendChild(backgroundColorSelector.container);	
 	
+	var noScroll = function(event) {event.preventDefault()};
+	
 	menu = new Menu();
+//	menu.container.addEventListener('touchstart', noScroll, false);
+	menu.container.addEventListener('touchmove', noScroll, false);
+//	menu.container.addEventListener('touchend', noScroll, false);
 	menu.foregroundColor.addEventListener('click', onMenuForegroundColor, false);
-	menu.foregroundColor.addEventListener('touchend', onMenuForegroundColor, false);
+//	menu.foregroundColor.addEventListener('touchend', onMenuForegroundColor, false);
 	menu.backgroundColor.addEventListener('click', onMenuBackgroundColor, false);
-	menu.backgroundColor.addEventListener('touchend', onMenuBackgroundColor, false);
+//	menu.backgroundColor.addEventListener('touchend', onMenuBackgroundColor, false);
 	menu.selector.addEventListener('change', onMenuSelectorChange, false);
 	menu.save.addEventListener('click', onMenuSave, false);
-	menu.save.addEventListener('touchend', onMenuSave, false);
+//	menu.save.addEventListener('touchend', onMenuSave, false);
 	menu.exportImage.addEventListener('click', onMenuExportImage, false);
-	menu.exportImage.addEventListener('touchend', onMenuExportImage, false);
+//	menu.exportImage.addEventListener('touchend', onMenuExportImage, false);
 	menu.clear.addEventListener('click', onMenuClear, false);
-	menu.clear.addEventListener('touchend', onMenuClear, false);
+//	menu.clear.addEventListener('touchend', onMenuClear, false);
 	menu.about.addEventListener('click', onMenuAbout, false);
-	menu.about.addEventListener('touchend', onMenuAbout, false);
+//	menu.about.addEventListener('touchend', onMenuAbout, false);
 	menu.container.addEventListener('mouseover', onMenuMouseOver, false);
 	menu.container.addEventListener('mouseout', onMenuMouseOut, false);
 	container.appendChild(menu.container);
+	
+	flattenCanvas.height = canvas.height = SCREEN_HEIGHT - menu.container.offsetHeight;
+	canvas.style.position = 'absolute';
+	canvas.style.top = menu.container.offsetHeight+'px';
+	context = canvas.getContext("2d");
 
 	if (STORAGE)
 	{
@@ -191,7 +199,8 @@ function onWindowResize()
 	SCREEN_WIDTH = window.innerWidth;
 	SCREEN_HEIGHT = window.innerHeight;
 	
-	menu.container.style.left = ((SCREEN_WIDTH - menu.container.offsetWidth) / 2) + 'px';
+	menu.container.style.left='0px';
+	menu.container.style.width=SCREEN_WIDTH+'px';
 	
 	about.container.style.left = ((SCREEN_WIDTH - about.container.offsetWidth) / 2) + 'px';
 	about.container.style.top = ((SCREEN_HEIGHT - about.container.offsetHeight) / 2) + 'px';
@@ -460,7 +469,7 @@ function onCanvasMouseDown( event )
 	
 	BRUSH_PRESSURE = wacom && wacom.isWacom ? wacom.pressure : 1;
 	
-	brush.strokeStart( event.clientX, event.clientY );
+	brush.strokeStart( event.clientX - canvas.offsetLeft, event.clientY - canvas.offsetTop );
 
 	window.addEventListener('mousemove', onCanvasMouseMove, false);
 	window.addEventListener('mouseup', onCanvasMouseUp, false);
@@ -470,7 +479,7 @@ function onCanvasMouseMove( event )
 {
 	BRUSH_PRESSURE = wacom && wacom.isWacom ? wacom.pressure : 1;
 	
-	brush.stroke( event.clientX, event.clientY );
+	brush.stroke( event.clientX - canvas.offsetLeft, event.clientY - canvas.offsetTop );
 }
 
 function onCanvasMouseUp()
@@ -529,7 +538,7 @@ function onCanvasTouchStart( event )
 		// draw
 		event.preventDefault();
 		
-		brush.strokeStart( event.touches[0].pageX, event.touches[0].pageY );
+		brush.strokeStart( event.touches[0].pageX - canvas.offsetLeft, event.touches[0].pageY - canvas.offsetTop );
 		
 		window.addEventListener('touchmove', onCanvasTouchMove, false);
 		window.addEventListener('touchend', onCanvasTouchEnd, false);
@@ -569,7 +578,7 @@ function onCanvasTouchMove( event )
 	if(event.touches.length == 1)
 	{
 		event.preventDefault();
-		brush.stroke( event.touches[0].pageX, event.touches[0].pageY );
+		brush.stroke( event.touches[0].pageX - canvas.offsetLeft, event.touches[0].pageY - canvas.offsetTop );
 	}
 }
 

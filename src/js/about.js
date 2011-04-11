@@ -12,7 +12,7 @@ About.prototype =
 		var text, containerText;
 		
 		this.container = document.createElement("div");
-		this.container.className = 'gui';
+		this.container.className = 'gui about';
 		this.container.style.position = 'absolute';
 		this.container.style.top = '0px';
 		this.container.style.visibility = 'hidden';
@@ -29,6 +29,11 @@ About.prototype =
 		
 		text = document.createElement("p");
 		text.style.textAlign = 'center';		
+		text.innerHTML = 'With <a href="https://github.com/nilium/harmony">modifications</a> for iPad friendliness by <a href="http://www.spifftastic.net">Noel Cower</a>';
+		containerText.appendChild(text);
+		
+		text = document.createElement("p");
+		text.style.textAlign = 'center';		
 		text.innerHTML = 'Pinch with <span class="key">two fingers</span> to adjust brush size.';
 		containerText.appendChild(text);
 		
@@ -40,11 +45,6 @@ About.prototype =
 		text = document.createElement("p");
 		text.style.textAlign = 'center';		
 		text.innerHTML = 'Tap <span class="key">four fingers</span> to reset the brush.';
-		containerText.appendChild(text);
-		
-		text = document.createElement("p");
-		text.style.textAlign = 'center';		
-		text.innerHTML = 'With <a href="https://github.com/nilium/harmony">modifications</a> for iPad friendliness by <a href="http://www.spifftastic.net">Noel Cower</a>';
 		containerText.appendChild(text);
 
 		text = document.createElement("p");
@@ -64,6 +64,10 @@ About.prototype =
 		text.innerHTML = '<em>Sketchy</em>, <em>Shaded</em>, <em>Chrome</em>, <em>Fur</em>, <em>LongFur</em> and <em>Web</em> are all variations of the neighbour points connection concept. First implemented in <a href="http://www.zefrank.com/scribbler/" target="_blank">The Scribbler</a>.';
 		containerText.appendChild(text);
 		
+		/*
+		// No offense to mr. doob, but I'm personally uncomfortable with
+		// hosting a donate button in a fork of Harmony.
+		
 		text = document.createElement("p");
 		text.innerHTML = 'If you like the tool, you can use this button to share your love ;)';
 		containerText.appendChild(text);
@@ -72,6 +76,7 @@ About.prototype =
 		text.style.textAlign = 'center';
 		text.innerHTML = '<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank"><input type="hidden" name="cmd" value="_s-xclick"><input type="hidden" name="hosted_button_id" value="VY7767JMMMYM4"><input type="image" src="https://www.paypal.com/en_GB/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online."><img alt="" border="0" src="https://www.paypal.com/en_GB/i/scr/pixel.gif" width="1" height="1"></form>';
 		containerText.appendChild(text);
+		*/
 	},
 	
 	show: function()

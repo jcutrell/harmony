@@ -21,7 +21,7 @@ Menu.prototype =
 		var option, space, separator, color_width = 15, color_height = 15;
 
 		this.container = document.createElement("div");
-		this.container.className = 'gui';
+		this.container.className = 'gui menu';
 		this.container.style.position = 'absolute';
 		this.container.style.top = '0px';
 		
