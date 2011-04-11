@@ -5,6 +5,8 @@ function sketchy( context )
 
 sketchy.prototype =
 {
+	name: "Sketchy",
+	
 	context: null,
 
 	prevMouseX: null, prevMouseY: null,

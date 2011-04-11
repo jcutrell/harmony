@@ -5,6 +5,8 @@ function circles( context )
 
 circles.prototype =
 {
+	name: "Circles",
+	
 	context: null,
 
 	prevMouseX: null, prevMouseY: null,

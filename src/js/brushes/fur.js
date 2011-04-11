@@ -5,6 +5,8 @@ function fur( context )
 
 fur.prototype =
 {
+	name: "Fur",
+	
 	context: null,
 
 	prevMouseX: null, prevMouseY: null,

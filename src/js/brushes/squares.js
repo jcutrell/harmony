@@ -5,6 +5,8 @@ function squares( context )
 
 squares.prototype =
 {
+	name: "Squares",
+	
 	context: null,
 
 	prevMouseX: null, prevMouseY: null,

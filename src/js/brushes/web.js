@@ -5,6 +5,8 @@ function web( context )
 
 web.prototype =
 {
+	name: "Web",
+	
 	context: null,
 
 	prevMouseX: null, prevMouseY: null,

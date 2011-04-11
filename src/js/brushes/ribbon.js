@@ -5,6 +5,8 @@ function ribbon( context )
 
 ribbon.prototype =
 {
+	name: "Ribbon",
+	
 	context: null,
 
 	mouseX: null, mouseY: null,

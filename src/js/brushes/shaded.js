@@ -5,6 +5,8 @@ function shaded( context )
 
 shaded.prototype =
 {
+	name: "Shaded",
+	
 	context: null,
 
 	prevMouseX: null, prevMouseY: null,

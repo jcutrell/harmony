@@ -5,6 +5,8 @@ function chrome( context )
 
 chrome.prototype =
 {
+	name: "Chrome",
+	
 	context: null,
 
 	prevMouseX: null, prevMouseY: null,

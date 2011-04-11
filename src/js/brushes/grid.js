@@ -5,6 +5,8 @@ function grid( context )
 
 grid.prototype =
 {
+	name: "Grid",
+	
 	context: null,
 
 	init: function( context )

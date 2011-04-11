@@ -5,6 +5,8 @@ function longfur( context )
 
 longfur.prototype =
 {
+	name: "Long Fur",
+	
 	context: null,
 
 	points: null, count: null,

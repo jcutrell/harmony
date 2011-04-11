@@ -5,6 +5,8 @@ function simple( context )
 
 simple.prototype =
 {
+	name: "Simple",
+	
 	context: null,
 
 	prevMouseX: null, prevMouseY: null,
