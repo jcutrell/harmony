@@ -29,12 +29,17 @@ About.prototype =
 		
 		text = document.createElement("p");
 		text.style.textAlign = 'center';		
+		text.innerHTML = 'Pinch with <span class="key">two fingers</span> to adjust brush size.';
+		containerText.appendChild(text);
+		
+		text = document.createElement("p");
+		text.style.textAlign = 'center';		
 		text.innerHTML = 'Tap <span class="key">three fingers</span> to open the foreground color picker.';
 		containerText.appendChild(text);
 		
 		text = document.createElement("p");
 		text.style.textAlign = 'center';		
-		text.innerHTML = 'Pinch with <span class="key">two fingers</span> to adjust brush size.';
+		text.innerHTML = 'Tap <span class="key">four fingers</span> to reset the brush.';
 		containerText.appendChild(text);
 		
 		text = document.createElement("p");

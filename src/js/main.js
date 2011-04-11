@@ -518,6 +518,7 @@ function onCanvasTouchStart( event )
 
 	if(event.touches.length == 1)
 	{
+		// draw
 		event.preventDefault();
 		
 		brush.strokeStart( event.touches[0].pageX, event.touches[0].pageY );
@@ -527,6 +528,7 @@ function onCanvasTouchStart( event )
 	}
 	else if (event.touches.length == 2)
 	{
+		// brush size
 		event.preventDefault();
 		
 		brushSizeTouchReference = distance(event.touches[0], event.touches[1]);
@@ -537,6 +539,7 @@ function onCanvasTouchStart( event )
 	}
 	else if (event.touches.length == 3)
 	{
+		// foreground color
 		event.preventDefault();
 		
 		var loc = averageTouchPositions(event.touches);
@@ -544,6 +547,12 @@ function onCanvasTouchStart( event )
 		
 		window.addEventListener('touchmove', onFGColorPickerTouchMove, false);
 		window.addEventListener('touchend', onFGColorPickerTouchEnd, false);
+	}
+	else if (event.touches.length == 4)
+	{
+		// reset brush
+		event.preventDefault();
+		window.addEventListener('touchend', onResetBrushTouchEnd, false);
 	}
 }
 
@@ -566,6 +575,17 @@ function onCanvasTouchEnd( event )
 
 		window.removeEventListener('touchmove', onCanvasTouchMove, false);
 		window.removeEventListener('touchend', onCanvasTouchEnd, false);
+	}
+}
+
+function onResetBrushTouchEnd( event )
+{
+	if (event.touches.length == 0)
+	{
+		event.preventDefault();
+		brush.destroy();
+		brush = eval("new " + BRUSHES[menu.selector.selectedIndex] + "(context)");
+		window.removeEventListener('touchend', onResetBrushTouchEnd, false);
 	}
 }
 
