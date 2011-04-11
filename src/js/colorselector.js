@@ -165,12 +165,12 @@ ColorSelector.prototype =
 			window.addEventListener('mousemove', onMouseMove, false);
 			window.addEventListener('mouseup', onMouseUp, false);
 			
-			update( event.clientX - scope.container.offsetLeft, event.clientY - scope.container.offsetTop );
+			update( event.clientX - scope.container.offsetLeft, event.clientY - scope.container.offsetTop, true );
 		}
 		
 		function onMouseMove( event )
 		{
-			update( event.clientX - scope.container.offsetLeft, event.clientY - scope.container.offsetTop );
+			update( event.clientX - scope.container.offsetLeft, event.clientY - scope.container.offsetTop, false );
 		}
 
 		function onMouseUp( event )
@@ -178,7 +178,7 @@ ColorSelector.prototype =
 			window.removeEventListener('mousemove', onMouseMove, false);
 			window.removeEventListener('mouseup', onMouseUp, false);
 		
-			update( event.clientX - scope.container.offsetLeft, event.clientY - scope.container.offsetTop );
+			update( event.clientX - scope.container.offsetLeft, event.clientY - scope.container.offsetTop, false );
 		}
 		
 		function onTouchStart( event )
